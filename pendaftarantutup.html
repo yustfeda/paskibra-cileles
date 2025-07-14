@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendaftaran Ditutup</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0d1117, #161b22); /* Subtle gradient background */
+            background-size: 400% 400%; /* For animation */
+            animation: gradientAnimation 15s ease infinite; /* Smooth gradient animation */
+            color: #e6edf3; /* Light text color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Prevent scroll if content is centered */
+        }
+
+        /* Gradient animation for body background */
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background-color: rgba(22, 27, 34, 0.9); /* Slightly lighter dark background with transparency */
+            backdrop-filter: blur(8px); /* Frosted glass effect */
+            padding: 2.5rem; /* Increased padding for spacious feel */
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); /* Stronger shadow */
+            text-align: center;
+            max-width: 90%; /* Max width for responsiveness */
+            width: 600px; /* Fixed width for larger screens */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem; /* Space between elements */
+            animation: fadeIn 1s ease-out; /* Fade in animation for container */
+            border: 1px solid rgba(48, 54, 61, 0.5); /* Subtle border */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .whatsapp-icon {
+            opacity: 0; /* Initially hidden */
+            transition: opacity 0.5s ease-in-out; /* Smooth fade-in */
+            margin-top: 1.5rem; /* Space above icon */
+            /* Add animation when visible */
+        }
+
+        .whatsapp-icon.visible {
+            opacity: 1;
+            animation: float 2s ease-in-out infinite; /* Floating animation */
+        }
+
+        /* Floating animation for WhatsApp icon */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .whatsapp-icon a {
+            display: inline-block;
+            background-color: #25D366; /* WhatsApp green */
+            border-radius: 50%;
+            padding: 0.8rem; /* Larger touch target */
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .whatsapp-icon a:hover {
+            transform: scale(1.1); /* Slight zoom on hover */
+        }
+
+        .whatsapp-icon svg {
+            width: 2.5rem; /* Larger icon size */
+            height: 2.5rem;
+            fill: white;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                gap: 1rem;
+            }
+            .text-4xl {
+                font-size: 2.5rem; /* Smaller heading on mobile */
+            }
+            .text-lg {
+                font-size: 1rem; /* Smaller body text on mobile */
+            }
+            .whatsapp-icon svg {
+                width: 2rem;
+                height: 2rem;
+            }
+            .whatsapp-icon a {
+                padding: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- GIF Animation Section -->
+        <div class="gif-container">
+            <!-- Updated GIF URL -->
+            <img src="https://media.giphy.com/media/xdH0MjQ83lGFVv7gjR/giphy.gif"
+                 onerror="this.onerror=null;this.src='https://placehold.co/300x200/333/fff?text=GIF+Placeholder'"
+                 alt="Animasi Penutupan Pendaftaran"
+                 class="w-full max-w-xs md:max-w-sm rounded-lg shadow-lg">
+        </div>
+
+        <!-- Main Message -->
+        <h1 class="text-4xl md:text-5xl font-bold text-white leading-tight">Mohon Maaf</h1>
+        <p class="text-lg md:text-xl text-gray-300 mb-4">
+            Pendaftaran telah ditutup. Silakan tunggu informasi terkait pendaftaran selanjutnya
+            atau bisa chat admin <span id="chatAdminLink" class="text-white-400 cursor-pointer hover:underline">disini 👇</span>
+        </p>
+
+        <!-- WhatsApp Icon (initially hidden) -->
+        <div id="whatsappContainer" class="whatsapp-icon">
+            <a href="https://wa.me/6285817938860" target="_blank" aria-label="Chat Admin via WhatsApp">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12.04 2c-5.45 0-9.91 4.46-9.91 9.91 0 1.75.5 3.42 1.46 4.88L2.05 22l5.05-1.32c1.39.76 2.97 1.16 4.59 1.16 5.45 0 9.91-4.46 9.91-9.91S17.49 2 12.04 2zm4.84 14.56c-.3.2-.74.31-1.2.31-.4 0-.8-.12-1.16-.35-.1-.06-.2-.12-.3-.18l-.2-.11c-.75-.45-1.74-.94-2.62-1.57-.64-.46-1.27-.99-1.77-1.57-.49-.59-.88-1.22-1.16-1.9-.28-.68-.43-1.4-.43-2.15 0-.75.14-1.47.43-2.15.28-.68.67-1.31 1.16-1.9.49-.59 1.12-1.12 1.77-1.57.64-.46 1.63-.95 2.62-1.57.1-.06.2-.12.3-.18.36-.23.76-.35 1.16-.35.46 0 .9.11 1.2.31.3.2.5.47.6.8.09.33.09.7.02 1.05-.06.35-.2.67-.4.95-.2.28-.47.5-.75.68-.28.18-.58.3-.9.37-.32.07-.65.07-.97 0-.32-.07-.64-.19-.9-.37-.26-.18-.5-.4-.7-.68-.2-.28-.35-.58-.43-.9-.08-.32-.08-.65 0-.97.07-.32.19-.64.37-.9.18-.26.4-.5.68-.7.28-.2.58-.35.9-.43.32-.08.65-.08.97 0 .32.07.64.19.9.37.26.18.5.4.7.68.2.28.35.58.43.9.08.32.08.65 0 .97-.07.32-.19.64-.37.9-.18-.26-.4-.5-.68-.7-.28-.18-.58-.3-.9-.37-.32.07-.65.07-.97 0zm-1.6-1.6c.1-.06.2-.12.3-.18.36-.23.76-.35 1.16-.35.46 0 .9.11 1.2.31.3.2.5.47.6.8.09.33.09.7.02 1.05-.06.35-.2.67-.4.95-.2.28-.47.5-.75.68-.28.18-.58.3-.9.37-.32.07-.65.07-.97 0-.32-.07-.64-.19-.9-.37-.26-.18-.5-.4-.7-.68-.2-.28-.35-.58-.43-.9-.08-.32-.08-.65 0-.97.07-.32.19-.64.37-.9-.18-.26-.4-.5-.68-.7-.28-.18-.58-.3-.9-.37-.32.07-.65.07-.97 0z"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Get the WhatsApp container element
+        const whatsappContainer = document.getElementById('whatsappContainer');
+        const chatAdminLink = document.getElementById('chatAdminLink');
+
+        // Function to show the WhatsApp icon
+        const showWhatsappIcon = () => {
+            whatsappContainer.classList.add('visible');
+            // Optional: Scroll to the icon if it's off-screen on smaller devices
+            // whatsappContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+
+        // Add click listener to "disini" text
+        chatAdminLink.addEventListener('click', () => {
+            // Immediately show the WhatsApp icon when "disini" is clicked
+            showWhatsappIcon();
+            // Optional: You might want to remove the 5-second delay if the user clicks early
+            clearTimeout(whatsappTimeout);
+        });
+
+        // Set a timeout to show the WhatsApp icon after 5 seconds (5000 milliseconds)
+        const whatsappTimeout = setTimeout(showWhatsappIcon, 5000);
+
+        // Optional: Add a simple animation for the main text on load
+        window.addEventListener('load', () => {
+            const h1 = document.querySelector('h1');
+            const p = document.querySelector('p');
+            h1.style.opacity = '1';
+            h1.style.transform = 'translateY(0)';
+            p.style.opacity = '1';
+            p.style.transform = 'translateY(0)';
+        });
+    </script>
+</body>
+</html>

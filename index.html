@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purna Paskibra Kecamatan Cileles</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for hamburger icon and arrows -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f8f8; /* Warna latar belakang terang */
+        }
+        /* Custom styles for hover effects and active states if needed */
+        .nav-link {
+            position: relative;
+            padding-bottom: 4px;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background-color: #dc2626; /* Merah */
+            transition: width 0.3s ease-in-out;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .mobile-nav-link {
+            position: relative;
+            padding-bottom: 4px;
+        }
+        .mobile-nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background-color: #dc2626; /* Merah */
+            transition: width 0.3s ease-in-out;
+        }
+        .mobile-nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Slider specific styles */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden; /* Hide overflow from transformed slides */
+            padding-top: 20px; /* Space for the stacked effect */
+            padding-bottom: 20px;
+        }
+
+        .slides-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 400px; /* Fixed height for the slider area */
+            perspective: 1000px; /* For 3D transform effect */
+            -webkit-perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute;
+            width: 80%; /* Adjust as needed */
+            max-width: 500px; /* Max width for slides */
+            height: 100%;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            transition: transform 0.5s ease-out, opacity 0.5s ease-out, z-index 0.5s ease-out;
+            cursor: grab;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none; /* Prevent text selection during drag */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .slide.dragging {
+            cursor: grabbing;
+            transition: none; /* Disable transition during drag */
+        }
+
+        .slider-nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.3s;
+            z-index: 60; /* Above slides, but below mobile nav */
+        }
+
+        .slider-nav-button:hover {
+            background-color: rgba(255, 255, 255, 1);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .slider-nav-button i {
+            color: #dc2626; /* Red color */
+            font-size: 24px;
+        }
+
+        .slider-nav-button.left {
+            left: 10px;
+        }
+
+        .slider-nav-button.right {
+            right: 10px;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+            .slides-wrapper {
+                height: 300px; /* Smaller height for mobile */
+            }
+            .slide {
+                width: 90%; /* Wider on mobile */
+            }
+            .slider-nav-button {
+                width: 40px;
+                height: 40px;
+            }
+            .slider-nav-button i {
+                font-size: 20px;
+            }
+        }
+
+        /* Animations for hero section elements */
+        @keyframes fadeInFromBottom {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fadeInFromBottom 0.8s ease-out forwards;
+            opacity: 0; /* Start hidden */
+        }
+        .delay-200 {
+            animation-delay: 0.2s;
+        }
+        .delay-400 {
+            animation-delay: 0.4s;
+        }
+
+        /* Z-index adjustments for mobile navigation to be on top */
+        #mobile-nav-overlay {
+            z-index: 70; /* Higher than slider buttons (60) */
+        }
+        #mobile-nav {
+            z-index: 80; /* Highest to ensure it's on top of everything else */
+        }
+
+        /* Modal specific styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 100; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* WhatsApp Button Styles and Animation */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #25D366; /* WhatsApp Green */
+            color: white;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            z-index: 90; /* Higher than mobile nav and modals */
+            opacity: 0; /* Start hidden */
+            transform: translateY(20px); /* Start slightly below */
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1) translateY(0);
+        }
+
+        /* Animation for appearing/disappearing */
+        .whatsapp-float.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .whatsapp-float.hide {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md py-4 px-6 md:px-12 fixed w-full z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Website Title -->
+            <a href="#" class="text-xl md:text-2xl font-bold text-red-700">Purna Paskibra Kecamatan Cileles</a>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex space-x-8">
+                <a href="#hero" class="nav-link text-gray-700 hover:text-red-700 font-medium transition duration-300">Beranda</a>
+                <a href="#about" class="nav-link text-gray-700 hover:text-red-700 font-medium transition duration-300">Profil</a>
+                <a href="pengumuman.html" class="nav-link text-gray-700 hover:text-red-700 font-medium transition duration-300">Pengumuman</a>
+                <a href="#documents" class="nav-link text-gray-700 hover:text-red-700 font-medium transition duration-300">Dokumen</a>
+                <a href="#tahapan" class="nav-link text-gray-700 hover:text-red-700 font-medium transition duration-300">Tahapan</a>
+            </nav>
+
+            <!-- Mobile Hamburger Menu -->
+            <div class="md:hidden">
+                <button id="hamburger-menu" class="text-gray-700 hover:text-red-700 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation Overlay -->
+    <div id="mobile-nav-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+    <nav id="mobile-nav" class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden hidden">
+        <div class="p-6">
+            <button id="close-mobile-nav" class="absolute top-4 right-4 text-gray-700 hover:text-red-700 focus:outline-none">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <ul class="mt-12 space-y-4">
+                <li><a href="#hero" class="mobile-nav-link block text-gray-700 hover:text-red-700 text-lg font-medium py-2">Beranda</a></li>
+                <li><a href="#about" class="mobile-nav-link block text-gray-700 hover:text-red-700 text-lg font-medium py-2">Profil</a></li>
+                <li><a href="pengumuman.html" class="mobile-nav-link block text-gray-700 hover:text-red-700 text-lg font-medium py-2">Pengumuman</a></li>
+                <li><a href="#documents" class="mobile-nav-link block text-gray-700 hover:text-red-700 text-lg font-medium py-2">Dokumen</a></li>
+                <li><a href="#tahapan" class="mobile-nav-link block text-gray-700 hover:text-red-700 text-lg font-medium py-2">Tahapan</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/6285817938860" target="_blank" id="whatsapp-button" class="whatsapp-float">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Main Content Section -->
+    <main class="pt-20 pb-12">
+        <!-- Hero Section -->
+        <section id="hero" class="relative bg-gradient-to-r from-red-700 to-red-500 text-white py-20 md:py-32 flex items-center justify-center">
+            <div class="container mx-auto text-center px-4">
+                <!-- Logos added here -->
+                <div class="flex justify-center items-center space-x-4 mb-6">
+                    <img src="assets/Logo purnacil.PNG" alt="Logo Paskibra 1" class="w-20 h-20 rounded-full shadow-md animate-fade-in-up delay-100">
+                    <img src="assets/Lebak.png" alt="Logo Paskibra 2" class="w-20 h-20 rounded-full shadow-md animate-fade-in-up delay-200">
+                </div>
+                <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4 animate-fade-in-up">
+                    Selamat Datang di <br class="md:hidden"> Purna Paskibra Kecamatan Cileles
+                </h1>
+                <p class="text-lg md:text-xl mb-8 opacity-90 animate-fade-in-up delay-200">
+                    Membentuk Generasi Muda yang Berintegritas dan Berjiwa Nasionalis
+                </p>
+                <a href="#about" class="bg-white text-red-700 hover:bg-gray-100 px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition duration-300 ease-in-out transform hover:scale-105 animate-fade-in-up delay-400">
+                    Pelajari Lebih Lanjut
+                </a>
+            </div>
+        </section>
+
+        <!-- About Section - Now with Image Slider -->
+        <section id="about" class="py-16 bg-white">
+            <div class="container mx-auto px-6 md:px-12">
+                <h2 class="text-3xl font-bold text-center text-red-700 mb-10">Kegiatan Kami</h2>
+                <div class="slider-container">
+                    <div class="slides-wrapper" id="slides-wrapper">
+                        <!-- Slides will be dynamically added here by JavaScript -->
+                    </div>
+                    <button id="prev-slide" class="slider-nav-button left">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button id="next-slide" class="slider-nav-button right">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="text-center mt-10">
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        Purna Paskibra Kecamatan Cileles aktif dalam berbagai kegiatan yang bertujuan untuk mengembangkan potensi anggota dan memberikan kontribusi positif kepada masyarakat. Lihatlah beberapa momen terbaik kami di atas!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Announcements Section - Now with LLM Feature -->
+        <section id="announcement" class="py-16 bg-gray-100">
+            <div class="container mx-auto px-6 md:px-12">
+                <h2 class="text-3xl font-bold text-center text-red-700 mb-10">Pengumuman</h2>
+                <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                        Dapatkan informasi terbaru mengenai kegiatan, acara, dan berita penting dari Purna Paskibra Kecamatan Cileles.
+                    </p>
+                    <button id="open-announcement-modal" class="bg-red-700 text-white hover:bg-red-800 px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+                        Buat Draf Pengumuman Baru ✨
+                    </button>
+                    <div class="mt-8 text-left">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Pengumuman Terbaru</h3>
+                        <ul id="announcements-list" class="space-y-4">
+                            <!-- Example announcement -->
+                            <li class="bg-gray-50 p-4 rounded-md shadow-sm">
+                                <h4 class="font-semibold text-red-600">Rapat Anggota Rutin</h4>
+                                <p class="text-gray-700 text-sm mt-1">Akan diadakan pada Sabtu, 20 Juli 2025, pukul 09.00 WIB di Aula Kecamatan Cileles. Diharapkan kehadiran seluruh anggota untuk membahas persiapan HUT RI.</p>
+                            </li>
+                            <!-- More announcements can be added here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Important Documents Section - Updated with specific categories -->
+        <section id="documents" class="py-16 bg-white">
+            <div class="container mx-auto px-6 md:px-12">
+                <h2 class="text-3xl font-bold text-center text-red-700 mb-10">Unduh Dokumen</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Document Card 1: Dokumen Tambahan -->
+                    <div class="bg-gray-50 p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="text-red-600 text-4xl mb-4 text-center">
+                            <i class="fas fa-file-invoice"></i> <!-- Icon for additional documents -->
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3 text-center">Dokumen Tambahan</h3>
+                        <p class="text-gray-600 text-center mb-6">Berkas pendukung dan informasi pelengkap kegiatan.</p>
+                        <a href="https://www.africau.edu/images/default/sample.pdf" target="_blank" class="block w-full text-center bg-red-700 text-white hover:bg-red-800 px-6 py-3 rounded-full text-md font-semibold transition duration-300 ease-in-out">
+                            <i class="fas fa-download mr-2"></i> Unduh
+                        </a>
+                    </div>
+                    <!-- Document Card 2: Surat Izin Orang Tua -->
+                    <div class="bg-gray-50 p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="text-red-600 text-4xl mb-4 text-center">
+                            <i class="fas fa-file-invoice"></i> <!-- Icon for parent's permission letter -->
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3 text-center">Surat Keterangan Lolos</h3>
+                        <p class="text-gray-600 text-center mb-6">Surat Keterangan Lolos seleksi tahap II dan lanjut pada tahap Pra Training Center</p>
+                        <a href="https://drive.google.com/file/d/1LOjAozHhasYyYYhIK-y2nY4MLDpGqNL2/view?usp=drivesdk" target="_blank" class="block w-full text-center bg-red-700 text-white hover:bg-red-800 px-6 py-3 rounded-full text-md font-semibold transition duration-300 ease-in-out">
+                            <i class="fas fa-download mr-2"></i> Unduh
+                        </a>
+                    </div>
+                    <!-- Document Card 3: Dokumen Pernyataan -->
+                    <div class="bg-gray-50 p-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="text-red-600 text-4xl mb-4 text-center">
+                            <i class="fas fa-clipboard-check"></i> <!-- Icon for statement document -->
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3 text-center">Dokumen Pernyataan</h3>
+                        <p class="text-gray-600 text-center mb-6">Formulir pernyataan komitmen dan kesediaan.</p>
+                        <a href="https://drive.google.com/file/d/1a22ivRps96QxMWwXG38yuY7X31mM1F8J/view?usp=drivesdk" target="_blank" class="block w-full text-center bg-red-700 text-white hover:bg-red-800 px-6 py-3 rounded-full text-md font-semibold transition duration-300 ease-in-out">
+                            <i class="fas fa-download mr-2"></i> Unduh
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LLM Announcement Generator Modal -->
+        <div id="announcement-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-button" id="close-announcement-modal">&times;</span>
+                <h3 class="text-2xl font-bold text-red-700 mb-6 text-center">Buat Draf Pengumuman ✨</h3>
+                <div class="mb-4">
+                    <label for="announcement-prompt" class="block text-gray-700 text-sm font-bold mb-2">
+                        Deskripsi Pengumuman (misal: Rapat rutin anggota pada Sabtu, 20 Juli 2025, membahas persiapan HUT RI):
+                    </label>
+                    <textarea id="announcement-prompt" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-24" placeholder="Masukkan detail pengumuman di sini..."></textarea>
+                </div>
+                <button id="generate-announcement-btn" class="bg-red-700 text-white hover:bg-red-800 px-6 py-2 rounded-md font-semibold transition duration-300 ease-in-out transform hover:scale-105 w-full mb-4">
+                    Hasilkan Draf Pengumuman
+                </button>
+                <div id="loading-indicator" class="text-center text-gray-600 hidden mb-4">
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Sedang menghasilkan draf...
+                </div>
+                <div id="announcement-output-container" class="mt-4 hidden">
+                    <label for="announcement-output" class="block text-gray-700 text-sm font-bold mb-2">
+                        Draf Pengumuman:
+                    </label>
+                    <textarea id="announcement-output" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-48" readonly></textarea>
+                    <button id="copy-announcement-btn" class="bg-gray-200 text-gray-800 hover:bg-gray-300 px-4 py-2 rounded-md text-sm font-semibold mt-2 float-right">
+                        Salin Draf
+                    </button>
+                </div>
+                <div id="error-message" class="text-red-500 text-sm mt-4 hidden">
+                    Terjadi kesalahan saat menghasilkan draf. Silakan coba lagi.
+                </div>
+            </div>
+        </div>
+
+        <!-- Features/Values Section -->
+        <section id="tahapan" class="py-16 bg-gray-100">
+            <div class="container mx-auto px-6 md:px-12">
+                <h2 class="text-3xl font-bold text-center text-red-700 mb-10">Nilai-Nilai Kami</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-lg shadow-lg text-center transform hover:scale-105 transition duration-300">
+                        <div class="text-red-600 text-5xl mb-4">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Integritas</h3>
+                        <p class="text-gray-600">Menjunjung tinggi kejujuran dan etika dalam setiap tindakan.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-lg text-center transform hover:scale-105 transition duration-300">
+                        <div class="text-red-600 text-5xl mb-4">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Disiplin</h3>
+                        <p class="text-gray-600">Menerapkan ketertiban dan konsistensi dalam setiap aspek kehidupan.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-lg text-center transform hover:scale-105 transition duration-300">
+                        <div class="text-red-600 text-5xl mb-4">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Nasionalisme</h3>
+                        <p class="text-gray-600">Mencintai dan mengabdi kepada bangsa dan negara.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Section -->
+        <section class="py-16 bg-red-700 text-white">
+            <div class="container mx-auto text-center px-6 md:px-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">Bergabunglah Bersama Kami!</h2>
+                <p class="text-lg md:text-xl mb-8 opacity-90">
+                    Jadilah bagian dari komunitas Purna Paskibra Kecamatan Cileles dan berkontribusi untuk masa depan bangsa.
+                </p>
+                <a href="pendaftarantutup.html" class="bg-white text-red-700 hover:bg-gray-100 px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+                    Daftar Sekarang
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto text-center px-6 md:px-12">
+            <p class="text-sm">&copy; 2025 Purna Paskibra Kecamatan Cileles. All rights reserved.</p>
+            <div class="flex justify-center space-x-4 mt-4">
+                <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const hamburgerMenu = document.getElementById('hamburger-menu');
+        const mobileNav = document.getElementById('mobile-nav');
+        const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+        const closeMobileNavBtn = document.getElementById('close-mobile-nav'); 
+
+        // Function to open mobile navigation
+        function openMobileNav() {
+            mobileNav.classList.remove('hidden'); // Make it visible first
+            mobileNav.classList.remove('translate-x-full');
+            mobileNav.classList.add('translate-x-0');
+            mobileNavOverlay.classList.remove('hidden');
+        }
+
+        // Function to close mobile navigation
+        function closeMobileNav() {
+            mobileNav.classList.remove('translate-x-0');
+            mobileNav.classList.add('translate-x-full');
+            // Hide it after the transition completes (optional, but good for accessibility)
+            mobileNav.addEventListener('transitionend', function handler() {
+                mobileNav.classList.add('hidden');
+                mobileNav.removeEventListener('transitionend', handler);
+            }, { once: true }); // Ensure listener is removed after one execution
+            mobileNavOverlay.classList.add('hidden');
+        }
+
+        // Event listener for hamburger menu click
+        hamburgerMenu.addEventListener('click', openMobileNav);
+
+        // Event listener for close button click inside mobile nav (using the renamed variable)
+        closeMobileNavBtn.addEventListener('click', closeMobileNav); 
+
+        // Event listener for clicking outside the mobile navigation (overlay)
+        mobileNavOverlay.addEventListener('click', closeMobileNav);
+
+        // Close mobile nav if a link inside it is clicked (optional, but good for UX)
+        mobileNav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', closeMobileNav);
+        });
+
+        // --- Image Slider Logic ---
+        const slidesWrapper = document.getElementById('slides-wrapper');
+        const prevSlideBtn = document.getElementById('prev-slide');
+        const nextSlideBtn = document.getElementById('next-slide');
+
+        const images = [
+            'assets/baki.JPG', // Orange Red
+            'assets/plcarita.JPG', // Dark Red
+            'apel.jpeg', // Burgundy
+            'assets/bandung.JPG', // Dark Purple
+            'assets/pengibarannn.JPG'  // Gold
+            
+        ];
+
+        let currentIndex = 0;
+        let isDragging = false;
+        let startX = 0;
+        let currentTranslate = 0;
+        let prevTranslate = 0;
+
+        // Function to create and append slides
+        function createSlides() {
+            slidesWrapper.innerHTML = ''; // Clear existing slides
+            images.forEach((src, index) => {
+                const slide = document.createElement('div');
+                slide.classList.add('slide');
+                slide.dataset.index = index;
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = `Kegiatan Paskibra ${index + 1}`;
+                slide.appendChild(img);
+                slidesWrapper.appendChild(slide);
+            });
+        }
+
+        // Function to set slide positions and transformations
+        function setSlidePositions() {
+            const slides = slidesWrapper.querySelectorAll('.slide');
+            const slideWidth = slides[0] ? slides[0].offsetWidth : 0; // Get actual slide width
+
+            slides.forEach((slide, index) => {
+                const offset = index - currentIndex; // Distance from current active slide
+                let translateX = offset * (slideWidth * 0.6); // Adjust 0.6 for desired overlap
+                let scale = 1 - Math.abs(offset) * 0.15; // Scale down side slides
+                let opacity = 1 - Math.abs(offset) * 0.3; // Fade out side slides
+                let zIndex = 100 - Math.abs(offset); // Bring active slide to front
+
+                // Ensure opacity doesn't go below 0
+                opacity = Math.max(0, opacity);
+
+                // Hide slides far away
+                if (Math.abs(offset) > 2) { // Hide slides more than 2 positions away
+                    opacity = 0;
+                    zIndex = 0;
+                    translateX = offset > 0 ? slidesWrapper.offsetWidth : -slidesWrapper.offsetWidth; // Move off screen
+                }
+
+                slide.style.transform = `translateX(${translateX}px) scale(${scale})`;
+                slide.style.opacity = opacity;
+                slide.style.zIndex = zIndex;
+            });
+        }
+
+        // Event listeners for mouse/touch down
+        slidesWrapper.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.pageX || e.touches[0].pageX;
+            prevTranslate = currentTranslate;
+            slidesWrapper.classList.add('dragging');
+        });
+
+        slidesWrapper.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].pageX;
+            prevTranslate = currentTranslate;
+            slidesWrapper.classList.add('dragging');
+        });
+
+        // Event listeners for mouse/touch move
+        slidesWrapper.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const currentX = e.pageX || e.touches[0].pageX;
+            const dragDistance = currentX - startX;
+            currentTranslate = prevTranslate + dragDistance;
+
+            // Apply temporary transform during drag
+            const slides = slidesWrapper.querySelectorAll('.slide');
+            slides.forEach(slide => {
+                const initialTransform = slide.style.transform;
+                const match = initialTransform.match(/translateX\(([^)]+)px\)/);
+                const initialX = match ? parseFloat(match[1]) : 0;
+                slide.style.transform = `translateX(${initialX + dragDistance}px) scale(${1 - Math.abs(initialX + dragDistance) / slidesWrapper.offsetWidth * 0.3})`; // Simple scale during drag
+            });
+        });
+
+        slidesWrapper.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const currentX = e.touches[0].pageX;
+            const dragDistance = currentX - startX;
+            currentTranslate = prevTranslate + dragDistance;
+
+            const slides = slidesWrapper.querySelectorAll('.slide');
+            slides.forEach(slide => {
+                const initialTransform = slide.style.transform;
+                const match = initialTransform.match(/translateX\(([^)]+)px\)/);
+                const initialX = match ? parseFloat(match[1]) : 0;
+                slide.style.transform = `translateX(${initialX + dragDistance}px) scale(${1 - Math.abs(initialX + dragDistance) / slidesWrapper.offsetWidth * 0.3})`;
+            });
+        });
+
+        // Event listeners for mouse/touch up
+        slidesWrapper.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            slidesWrapper.classList.remove('dragging');
+            
+            const movedBy = currentTranslate - prevTranslate;
+            if (movedBy < -50) { // Swiped left
+                currentIndex = Math.min(currentIndex + 1, images.length - 1);
+            } else if (movedBy > 50) { // Swiped right
+                currentIndex = Math.max(currentIndex - 1, 0);
+            }
+            setSlidePositions(); // Snap to new position
+        });
+
+        slidesWrapper.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            slidesWrapper.classList.remove('dragging');
+
+            const movedBy = currentTranslate - prevTranslate;
+            if (movedBy < -50) { // Swiped left
+                currentIndex = Math.min(currentIndex + 1, images.length - 1);
+            } else if (movedBy > 50) { // Swiped right
+                currentIndex = Math.max(currentIndex - 1, 0);
+            }
+            setSlidePositions(); // Snap to new position
+        });
+
+        // Navigation button handlers
+        prevSlideBtn.addEventListener('click', () => {
+            currentIndex = Math.max(currentIndex - 1, 0);
+            setSlidePositions();
+        });
+
+        nextSlideBtn.addEventListener('click', () => {
+            currentIndex = Math.min(currentIndex + 1, images.length - 1);
+            setSlidePositions();
+        });
+
+        // Initialize slider on load and resize
+        window.addEventListener('load', () => {
+            createSlides();
+            setSlidePositions();
+            // Start WhatsApp button animation after page loads
+            toggleWhatsappButton(); // Initial state
+            setInterval(toggleWhatsappButton, 10000); // Repeat every 10 seconds
+        });
+        window.addEventListener('resize', setSlidePositions);
+
+        // --- LLM Announcement Generator Logic ---
+        const openAnnouncementModalBtn = document.getElementById('open-announcement-modal');
+        const announcementModal = document.getElementById('announcement-modal');
+        const closeAnnouncementModalBtn = document.getElementById('close-announcement-modal');
+        const announcementPromptInput = document.getElementById('announcement-prompt');
+        const generateAnnouncementBtn = document.getElementById('generate-announcement-btn');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const announcementOutputContainer = document.getElementById('announcement-output-container');
+        const announcementOutput = document.getElementById('announcement-output');
+        const copyAnnouncementBtn = document.getElementById('copy-announcement-btn');
+        const errorMessage = document.getElementById('error-message');
+
+        // Open modal
+        openAnnouncementModalBtn.addEventListener('click', () => {
+            announcementModal.classList.remove('hidden');
+            announcementModal.style.display = 'flex'; // Ensure flexbox for centering
+            announcementOutputContainer.classList.add('hidden'); // Hide previous output
+            errorMessage.classList.add('hidden'); // Hide previous errors
+            announcementPromptInput.value = ''; // Clear input
+            announcementOutput.value = ''; // Clear output
+        });
+
+        // Close modal
+        closeAnnouncementModalBtn.addEventListener('click', () => {
+            announcementModal.classList.add('hidden');
+            announcementModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside content
+        window.addEventListener('click', (event) => {
+            if (event.target == announcementModal) {
+                announcementModal.classList.add('hidden');
+                announcementModal.style.display = 'none';
+            }
+        });
+
+        // Generate announcement using Gemini API
+        generateAnnouncementBtn.addEventListener('click', async () => {
+            const prompt = announcementPromptInput.value.trim();
+            if (!prompt) {
+                errorMessage.textContent = "Mohon masukkan deskripsi pengumuman.";
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            loadingIndicator.classList.remove('hidden');
+            announcementOutputContainer.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+
+            try {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: `Buatkan draf pengumuman resmi untuk Purna Paskibra Kecamatan Cileles berdasarkan detail berikut: ${prompt}. Sertakan salam pembuka, isi pengumuman yang jelas, dan penutup yang sopan. Format sebagai teks biasa.` }] });
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // Canvas will automatically provide this
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    announcementOutput.value = text;
+                    announcementOutputContainer.classList.remove('hidden');
+                } else {
+                    errorMessage.textContent = "Gagal menghasilkan draf pengumuman. Respons tidak valid.";
+                    errorMessage.classList.remove('hidden');
+                    console.error('Invalid API response:', result);
+                }
+            } catch (error) {
+                errorMessage.textContent = "Terjadi kesalahan jaringan atau server. Silakan coba lagi.";
+                errorMessage.classList.remove('hidden');
+                console.error('Error calling Gemini API:', error);
+            } finally {
+                loadingIndicator.classList.add('hidden');
+            }
+        });
+
+        // Copy generated announcement to clipboard
+        copyAnnouncementBtn.addEventListener('click', () => {
+            announcementOutput.select();
+            document.execCommand('copy');
+            // Optionally, provide visual feedback
+            const originalText = copyAnnouncementBtn.textContent;
+            copyAnnouncementBtn.textContent = 'Tersalin!';
+            setTimeout(() => {
+                copyAnnouncementBtn.textContent = originalText;
+            }, 2000);
+        });
+
+        // --- WhatsApp Floating Button Logic ---
+        const whatsappButton = document.getElementById('whatsapp-button');
+        let isWhatsappVisible = false;
+
+        function toggleWhatsappButton() {
+            if (isWhatsappVisible) {
+                whatsappButton.classList.remove('show');
+                whatsappButton.classList.add('hide');
+                isWhatsappVisible = false;
+            } else {
+                whatsappButton.classList.remove('hide');
+                whatsappButton.classList.add('show');
+                isWhatsappVisible = true;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pengumuman</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for hamburger icon and arrows -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f8f8; /* Warna latar belakang terang */
+        }
+        /* Custom styles for hover effects and active states if needed */
+        .nav-link {
+            position: relative;
+            padding-bottom: 4px;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background-color: #dc2626; /* Merah */
+            transition: width 0.3s ease-in-out;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .mobile-nav-link {
+            position: relative;
+            padding-bottom: 4px;
+        }
+        .mobile-nav-link::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background-color: #dc2626; /* Merah */
+            transition: width 0.3s ease-in-out;
+        }
+        .mobile-nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Animations for hero section elements */
+        @keyframes fadeInFromBottom {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in-up {
+            animation: fadeInFromBottom 0.8s ease-out forwards;
+            opacity: 0; /* Start hidden */
+        }
+        .delay-200 {
+            animation-delay: 0.2s;
+        }
+        .delay-400 {
+            animation-delay: 0.4s;
+        }
+
+        /* Z-index adjustments for mobile navigation to be on top */
+        #mobile-nav-overlay {
+            z-index: 70; /* Higher than slider buttons (60) */
+        }
+        #mobile-nav {
+            z-index: 80; /* Highest to ensure it's on top of everything else */
+        }
+
+        /* Modal specific styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 100; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 30px; /* Increased padding */
+            border-radius: 12px; /* More rounded corners */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            animation: fadeIn 0.3s ease-out;
+            display: flex; /* Use flex for internal layout */
+            flex-direction: column;
+            align-items: center; /* Center content */
+            text-align: center; /* Center text */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-button {
+            position: absolute;
+            top: 15px; /* Adjusted position */
+            right: 15px; /* Adjusted position */
+            color: #aaa;
+            font-size: 32px; /* Larger close button */
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* WhatsApp Button Styles and Animation */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #25D366; /* WhatsApp Green */
+            color: white;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            z-index: 90; /* Higher than mobile nav and modals */
+            opacity: 0; /* Start hidden */
+            transform: translateY(20px); /* Start slightly below */
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1) translateY(0);
+        }
+
+        /* Animation for appearing/disappearing */
+        .whatsapp-float.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .whatsapp-float.hide {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* Specific styles for participant result modal - PROFESSIONAL LOOK */
+        .result-status-lolos {
+            background-color: #D1FAE5; /* Light green background */
+            color: #065F46; /* Dark green text */
+            font-weight: bold;
+            padding: 12px 20px; /* Adjusted padding */
+            border-radius: 10px; /* More rounded */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px; /* Increased gap */
+            font-size: 1.5rem; /* text-2xl */
+            margin-bottom: 1rem; /* Added margin-bottom for spacing */
+            width: 100%; /* Full width within its container */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        .result-status-tidak-lolos {
+            background-color: #FEE2E2; /* Light red background */
+            color: #991B1B; /* Dark red text */
+            font-weight: bold;
+            padding: 12px 20px; /* Adjusted padding */
+            border-radius: 10px; /* More rounded */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px; /* Increased gap */
+            font-size: 1.5rem; /* text-2xl */
+            margin-bottom: 1rem; /* Added margin-bottom for spacing */
+            width: 100%; /* Full width within its container */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+
+        /* Animation for status text */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-status-fade-in-up {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        .modal-content h3 {
+            border-bottom: 2px solid #ef4444; /* Red line under title */
+            padding-bottom: 15px; /* Increased padding */
+            margin-bottom: 25px; /* Increased margin */
+            width: 100%; /* Ensure line spans full width */
+        }
+
+        .participant-photo-container {
+            width: 120px; /* Larger photo */
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #ef4444; /* Red border */
+            margin-bottom: 20px; /* Space below photo */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0; /* Placeholder background */
+        }
+
+        .participant-photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .participant-detail-item {
+            display: flex;
+            justify-content: center; /* Center items */
+            gap: 8px; /* Space between label and value */
+            margin-bottom: 8px; /* Space between items */
+            font-size: 1.125rem; /* text-lg */
+            width: 100%; /* Ensure it takes full width for centering */
+        }
+
+        .participant-detail-item strong {
+            color: #374151; /* Darker grey for labels */
+        }
+
+        .participant-detail-item span {
+            color: #4B5563; /* Slightly lighter grey for values */
+        }
+
+        /* Responsive adjustments for modal */
+        @media (max-width: 768px) {
+            .modal-content {
+                padding: 20px;
+                max-width: 95%;
+            }
+            .participant-photo-container {
+                width: 100px;
+                height: 100px;
+            }
+            .result-status-lolos, .result-status-tidak-lolos {
+                font-size: 1.2rem; /* Adjusted for mobile */
+                padding: 10px 15px;
+            }
+            .close-button {
+                font-size: 28px;
+            }
+            .participant-detail-item {
+                font-size: 1rem; /* Adjusted for mobile */
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md py-4 px-6 md:px-12 fixed w-full z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <!-- Website Title -->
+            <a href="#" class="text-xl md:text-2xl font-bold text-red-700">Purna Paskibra Kecamatan Cileles</a>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex space-x-8">
+                <a href="index.html" class="nav-link text-gray-700 hover:text-red-700 font-medium transition duration-300">Beranda</a>
+                <a href="#about" class="nav-link text-gray-700 hover:text-red-700 font-medium transition duration-300">Profil</a>
+                <a href="#announcements" class="nav-link text-gray-700 hover:text-red-700 font-medium transition duration-300">Pengumuman</a>
+                <a href="index.html" class="nav-link text-gray-700 hover:text-red-700 font-medium transition duration-300">Dokumen</a>
+                <a href="#tahapan" class="nav-link text-gray-700 hover:text-red-700 font-medium transition duration-300">Tahapan</a>
+            </nav>
+
+            <!-- Mobile Hamburger Menu -->
+            <div class="md:hidden">
+                <button id="hamburger-menu" class="text-gray-700 hover:text-red-700 focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation Overlay -->
+    <div id="mobile-nav-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+    <nav id="mobile-nav" class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg z-50 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden hidden">
+        <div class="p-6">
+            <button id="close-mobile-nav" class="absolute top-4 right-4 text-gray-700 hover:text-red-700 focus:outline-none">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <ul class="mt-12 space-y-4">
+                <li><a href="index.html" class="mobile-nav-link block text-gray-700 hover:text-red-700 text-lg font-medium py-2">Beranda</a></li>
+                <li><a href="index.html" class="mobile-nav-link block text-gray-700 hover:text-red-700 text-lg font-medium py-2">Profil</a></li>
+                <li><a href="#announcements" class="mobile-nav-link block text-gray-700 hover:text-red-700 text-lg font-medium py-2">Pengumuman</a></li>
+                <li><a href="index.html" class="mobile-nav-link block text-gray-700 hover:text-red-700 text-lg font-medium py-2">Dokumen</a></li>
+                <li><a href="#tahapan" class="mobile-nav-link block text-gray-700 hover:text-red-700 text-lg font-medium py-2">Tahapan</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/6281234567890" target="_blank" id="whatsapp-button" class="whatsapp-float">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Main Content Section -->
+    <main class="pt-20 pb-12">
+        <!-- Hero Section -->
+        <section id="hero" class="relative bg-gradient-to-r from-red-700 to-red-500 text-white py-20 md:py-32 flex items-center justify-center">
+            <div class="container mx-auto text-center px-4">
+                <!-- Logos added here -->
+                <div class="flex justify-center items-center space-x-4 mb-6">
+                    <img src="assets/Logo purnacil.PNG" alt="Logo Paskibra 1" class="w-20 h-20 rounded-full shadow-md animate-fade-in-up delay-100">
+                    <img src="assets/Lebak.png" alt="Logo Paskibra 2" class="w-20 h-20 rounded-full shadow-md animate-fade-in-up delay-200">
+                </div>
+                <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4 animate-fade-in-up">
+                    Selamat Datang di <br class="md:hidden"> Purna Paskibra Kecamatan Cileles
+                </h1>
+                <p class="text-lg md:text-xl mb-8 opacity-90 animate-fade-in-up delay-200">
+                    Membentuk Generasi Muda yang Berintegritas dan Berjiwa Nasionalis
+                </p>
+                <a href="#participant-check" class="bg-white text-red-700 hover:bg-gray-100 px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition duration-300 ease-in-out transform hover:scale-105 animate-fade-in-up delay-400">
+                    Cek Status Peserta
+                </a>
+            </div>
+        </section>
+
+        <!-- Placeholder Sections for Navigation Links (Hidden for now, but can be populated) -->
+        <section id="about" class="py-16 bg-white hidden">
+            <div class="container mx-auto px-6 md:px-12">
+                <h2 class="text-3xl font-bold text-center text-red-700 mb-10">Profil Kami</h2>
+                <p class="text-center text-gray-700">Ini adalah bagian Profil. Konten akan ditambahkan di sini.</p>
+            </div>
+        </section>
+
+        <section id="announcements" class="py-16 bg-gray-100 hidden">
+            <div class="container mx-auto px-6 md:px-12">
+                <h2 class="text-3xl font-bold text-center text-red-700 mb-10">Pengumuman Terbaru</h2>
+                <p class="text-center text-gray-700">Ini adalah bagian Pengumuman. Konten akan ditambahkan di sini.</p>
+            </div>
+        </section>
+        
+        <section id="documents" class="py-16 bg-white hidden">
+            <div class="container mx-auto px-6 md:px-12">
+                <h2 class="text-3xl font-bold text-center text-red-700 mb-10">Dokumen Penting</h2>
+                <p class="text-center text-gray-700">Ini adalah bagian Dokumen. Konten akan ditambahkan di sini.</p>
+            </div>
+        </section>
+
+        <section id="tahapan" class="py-16 bg-gray-100 hidden">
+            <div class="container mx-auto px-6 md:px-12">
+                <h2 class="text-3xl font-bold text-center text-red-700 mb-10">Tahapan Seleksi</h2>
+                <p class="text-center text-gray-700">Ini adalah bagian Tahapan. Konten akan ditambahkan di sini.</p>
+            </div>
+        </section>
+        <!-- End Placeholder Sections -->
+
+
+        <!-- Participant Check Section -->
+        <section id="participant-check" class="py-16 bg-white">
+            <div class="container mx-auto px-6 md:px-12">
+                <h2 class="text-3xl font-bold text-center text-red-700 mb-10">Cek Status Peserta</h2>
+                <div class="bg-gray-100 p-8 rounded-lg shadow-lg text-center">
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">
+                        Masukkan Nomor Peserta Anda untuk melihat status kelulusan atau informasi penting lainnya.
+                    </p>
+                    <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                        <input type="text" id="participant-number-input" placeholder="Contoh: P025-017"
+                               class="shadow appearance-none border rounded w-full md:w-1/2 py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-lg">
+                        <button id="check-participant-btn"
+                                class="bg-red-700 text-white hover:bg-red-800 px-8 py-3 rounded-full text-lg font-semibold shadow-lg transition duration-300 ease-in-out transform hover:scale-105 w-full md:w-auto">
+                            Cek Status
+                        </button>
+                    </div>
+                    <p id="participant-error-message" class="text-red-500 text-sm mt-4 hidden">Nomor peserta tidak ditemukan.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Participant Result Modal -->
+        <div id="participant-result-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-button" id="close-participant-result-modal">&times;</span>
+                <h3 class="text-2xl font-bold text-red-700 text-center">Pengumuman Hasil Seleksi</h3>
+                <div id="participant-details" class="flex flex-col items-center w-full mt-6">
+                    <!-- Photo Container -->
+                    <div class="participant-photo-container">
+                        <img id="participant-photo" src="https://placehold.co/120x120/E5E7EB/4B5563?text=Foto" alt="Foto Peserta">
+                    </div>
+
+                    <div class="w-full max-w-md bg-gray-50 p-6 rounded-lg shadow-inner">
+                        <div class="participant-detail-item mb-2">
+                            <strong class="text-gray-700">Nomor Peserta:</strong> <span id="result-no-peserta" class="text-gray-800 font-semibold"></span>
+                        </div>
+                        <div class="participant-detail-item mb-2">
+                            <strong class="text-gray-700">Nama:</strong> <span id="result-nama" class="text-gray-800 font-semibold"></span>
+                        </div>
+                        <div class="participant-detail-item mb-6">
+                            <strong class="text-gray-700">Sekolah:</strong> <span id="result-sekolah" class="text-gray-800 font-semibold"></span>
+                        </div>
+
+                        <!-- Keputusan Panitia Section -->
+                        <div class="mb-4">
+                            <h4 class="text-xl font-bold text-gray-800 mb-3 border-b pb-2">Keputusan Panitia</h4>
+                            <div id="result-status-display" class="animate-status-fade-in-up w-full">
+                                <!-- Main Status Message -->
+                                <p class="text-3xl md:text-4xl font-extrabold mb-4 flex items-center justify-center gap-3" id="result-main-status-message">
+                                    <!-- Icon and text will be inserted by JS -->
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Catatan Penting Section -->
+                        <div class="mt-6 p-4 bg-gray-100 rounded-lg border border-gray-200">
+                            <h4 class="text-lg font-semibold text-gray-700 mb-2"></h4></h4>
+                            <p class="text-sm md:text-base text-gray-700 leading-relaxed" id="result-caption"></p>
+                        </div>
+                        <!-- SKL Link container removed -->
+                    </div>
+                </div>
+                <div id="participant-not-found" class="text-center text-red-500 text-lg hidden mt-6">
+                    <p>Nomor peserta tidak ditemukan.</p>
+                    <p class="text-sm mt-2">Mohon periksa kembali nomor yang Anda masukkan.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto text-center px-6 md:px-12">
+            <p class="text-sm">&copy; 2025 Purna Paskibra Kecamatan Cileles. All rights reserved.</p>
+            <div class="flex justify-center space-x-4 mt-4">
+                <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const hamburgerMenu = document.getElementById('hamburger-menu');
+        const mobileNav = document.getElementById('mobile-nav');
+        const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+        const closeMobileNavBtn = document.getElementById('close-mobile-nav'); 
+
+        // Function to open mobile navigation
+        function openMobileNav() {
+            mobileNav.classList.remove('hidden'); // Make it visible first
+            mobileNav.classList.remove('translate-x-full');
+            mobileNav.classList.add('translate-x-0');
+            mobileNavOverlay.classList.remove('hidden');
+        }
+
+        // Function to close mobile navigation
+        function closeMobileNav() {
+            mobileNav.classList.remove('translate-x-0');
+            mobileNav.classList.add('translate-x-full');
+            // Hide it after the transition completes (optional, but good for accessibility)
+            mobileNav.addEventListener('transitionend', function handler() {
+                mobileNav.classList.add('hidden');
+                mobileNav.removeEventListener('transitionend', handler);
+            }, { once: true }); // Ensure listener is removed after one execution
+            mobileNavOverlay.classList.add('hidden');
+        }
+
+        // Event listener for hamburger menu click
+        hamburgerMenu.addEventListener('click', openMobileNav);
+
+        // Event listener for close button click inside mobile nav (using the renamed variable)
+        closeMobileNavBtn.addEventListener('click', closeMobileNav); 
+
+        // Event listener for clicking outside the mobile navigation (overlay)
+        mobileNavOverlay.addEventListener('click', closeMobileNav);
+
+        // Close mobile nav if a link inside it is clicked (optional, but good for UX)
+        mobileNav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', closeMobileNav);
+        });
+
+        // --- WhatsApp Button Visibility Logic ---
+        const whatsappButton = document.getElementById('whatsapp-button');
+        let lastScrollTop = 0;
+
+        window.addEventListener('scroll', () => {
+            const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+            if (currentScrollTop > lastScrollTop) {
+                // Scrolling down
+                whatsappButton.classList.remove('show');
+                whatsappButton.classList.add('hide');
+            } else {
+                // Scrolling up
+                whatsappButton.classList.remove('hide');
+                whatsappButton.classList.add('show');
+            }
+            lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop; // For Mobile or negative scrolling
+        });
+
+        // Show button initially after a short delay
+        setTimeout(() => {
+            whatsappButton.classList.add('show');
+        }, 1000);
+
+        // --- Participant Check Logic ---
+        const participantNumberInput = document.getElementById('participant-number-input');
+        const checkParticipantBtn = document.getElementById('check-participant-btn');
+        const participantErrorMessage = document.getElementById('participant-error-message');
+        const participantResultModal = document.getElementById('participant-result-modal');
+        const closeParticipantResultModalBtn = document.getElementById('close-participant-result-modal');
+        const resultNoPeserta = document.getElementById('result-no-peserta');
+        const resultNama = document.getElementById('result-nama');
+        const resultSekolah = document.getElementById('result-sekolah'); 
+        const resultMainStatusMessage = document.getElementById('result-main-status-message'); 
+        const resultCaption = document.getElementById('result-caption');
+        const participantDetails = document.getElementById('participant-details');
+        const participantNotFound = document.getElementById('participant-not-found');
+        const resultStatusDisplay = document.getElementById('result-status-display');
+        const participantPhoto = document.getElementById('participant-photo'); 
+
+        // Simulated participant data
+        const participants = {
+            "P025-017": {
+                nama: "MULYA PERTIWI",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/mulya.jpg", // Placeholder for assets/mulya.jpg
+                status: "LOLOS",
+                
+            },
+            "P025-041": {
+                nama: "NENG HERMA YANTI",
+                sekolah: "SMK LENTERA BANGSA CILELES",
+                foto: "asset/Hermayanti.jpg", // Placeholder for assets/Hermayanti.jpg
+                status: "TIDAK LOLOS",
+                }, 
+            "P025-038": {
+                nama: "AINI ZAKIYAH",
+                sekolah: "SMK LENTERA BANGSA CILELES",
+                foto: "asset/Aini.jpg", // Placeholder for assets/Aini.jpg
+                status: "TIDAK LOLOS",
+            }, 
+            "P025-004": {
+                nama: "AL KEYLA QORRY",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/keyla.jpg", // Placeholder for assets/keyla.jpg
+                status: "LOLOS",
+                skl: "https://drive.google.com/file/d/1zWPmxvzL491GLiP-7aK3eUEczhGjln7G/view?usp=sharing"
+            }, 
+            "P025-025": {
+                nama: "ANISA FEBRIANI",
+                sekolah: "SMK NEGERI 1 CILELES",
+                foto: "asset/anisa.jpg", // Placeholder for assets/anisa.jpg
+                status: "LOLOS",
+                
+            }, 
+            "P025-047": {
+                nama: "AUDY PUSPA SILVANA",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/audy.jpg", // Placeholder for assets/audy.jpg
+                status: "LOLOS",
+                
+            }, 
+            "P025-039": {
+                nama: "AURA SALSA BILA",
+                sekolah: "SMK LENTERA BANGSA CILELES",
+                foto: "asset/aura.jpg", // Placeholder for assets/aura.jpg
+                status: "TIDAK LOLOS",
+                
+            }, 
+            "P025-031": {
+                nama: "BELLA PUTRI AGUSTIN",
+                sekolah: "SMK NEGERI 1 CILELES",
+                foto: "asset/bella.jpg", // Placeholder for assets/bella.jpg
+                status: "LOLOS",
+                
+            }, 
+            "P025-034": {
+                nama: "CERY AL-MAHERA",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/cery.jpg", // Placeholder for assets/cery.jpg
+                status: "LOLOS",
+            }, 
+            "P025-024": {
+                nama: "DARA JELITA MAHARANI",
+                sekolah: "SMK NEGERI 1 CILELES",
+                foto: "asset/dara.jpg", // Placeholder for assets/dara.jpg
+                status: "LOLOS",
+            }, 
+            "P025-036": {
+                nama: "ABDAN KOIRI ",
+                sekolah: "SMK NEGERI 1 CILELES",
+                foto: "asset/abdan.jpg", // Placeholder for assets/abdan.jpg
+                status: "LOLOS",
+            },
+            "P025-045": {
+                nama: "DINDA FAJARINA ",
+                sekolah: "SMK LENTERA BANGSA CILELES",
+                foto: "asset/dinda.jpg", // Placeholder for assets/dinda.jpg
+                status: "TIDAK LOLOS",
+            },
+            "P025-001": {
+                nama: "DWI NURKHOLILAH",
+                sekolah: "SMK CIGEMBOR",
+                foto: "asset/dwi.jpeg", // Placeholder for assets/dwi.jpeg
+                status: "TIDAK LOLOS",
+            },
+            "P025-043": {
+                nama: "FIRDA SULISTIA",
+                sekolah: "SMK LENTERA BANGSA CILELES",
+                foto: "asset/firda.jpg", // Placeholder for assets/firda.jpg
+                status: "TIDAK LOLOS",
+            },
+            "P025-042": {
+                nama: "GOFUR",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/gofur.png", // Placeholder for assets/gofur.png
+                status: "LOLOS",
+            },
+            "P025-010": {
+                nama: "HERLINDA",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/herlinda.jpg", // Placeholder for assets/herlinda.jpg
+                status: "LOLOS",
+            },
+            "P025-022": {
+                nama: "IBNU MALINAFIS",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/ibnu.jpg", // Placeholder for assets/ibnu.jpg
+                status: "LOLOS",
+            },
+            "P025-019": {
+                nama: "IKBAL ",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/ikbal.jpg", // Placeholder for assets/ikbal.jpg
+                status: "LOLOS",
+                
+            },
+            "P025-018": {
+                nama: "IMAN NUDIN",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset.iman.png", // Placeholder for assets/iman.png
+                status: "LOLOS",
+                
+            },
+            "P025-026": {
+                nama: "INDRIYANI",
+                sekolah: "SMK NEGERI 1 CILELES",
+                foto: "asset/indri.png", // Placeholder for assets/indri.png
+                status: "LOLOS",
+                
+            },
+            "P025-032": {
+                nama: "IRWAN",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/irwan.jpg", // Placeholder for assets/irwan.jpg
+                status: "LOLOS",
+                
+            },
+            "P025-048": {
+                nama: "KHUMAEROH",
+                sekolah: "SMK DARUSYAFAAH",
+                foto: "asset/khumaeroh.jpg", // Placeholder for assets/khumaeroh.jpg
+                status: "LOLOS",
+        
+            },
+          
+            "P025-013": {
+                nama: "LALA FITRIANI LUSI",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/lala.jpg", // Placeholder for assets/lala.jpg
+                status: "LOLOS",
+          
+            },
+            "P025-006": {
+                nama: "MILA ASTUTI",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/mila.jpg", // Placeholder for assets/mila.jpg
+                status: "LOLOS",
+                
+            },
+            "P025-035": {
+                nama: "MUHAMAD DAVID AHDIAT",
+                sekolah: "SMK NEGERI 1 CILELES",
+                foto: "asset/david.jpg", // Placeholder for assets/david.jpg
+                status: "LOLOS",
+                
+            },
+
+            "P025-003": {
+                nama: "MUHAMAD SYARIF HIDAYAT",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/syarif.png", // Placeholder for assets/syarif.png
+                status: "LOLOS",
+          
+            },
+            "P025-037": {
+                nama: "MUHAMMAD DIRLI KURNIAWAN",
+                sekolah: "SMK NEGERI 1 CILELES",
+                foto: "asset/dirli.jpg", // Placeholder for assets/dirli.jpg
+                status: "LOLOS",
+          
+            },
+            "P025-012": {
+                nama: "NELLY MAESAROH",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/nelly.jpg", // Placeholder for assets/nelly.jpg
+                status: "LOLOS",
+                
+            },
+            "P025-020": {
+                nama: "RAHMAT NAVISA NAZAHRA",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/rahmat.jpg", // Placeholder for assets/rahmat.jpg
+                status: "LOLOS",
+                
+            },
+            "P025-005": {
+                nama: "RAISA JULIANI ",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/raisa.png", // Placeholder for assets/raisa.png
+                status: "LOLOS",
+
+            },
+            "P025-016": {
+                nama: "RIMA MELATI ",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/rima.jpg", // Placeholder for assets/rima.jpg
+                status: "LOLOS",
+          
+            },
+            "P025-049": {
+                nama: "SANTI NURUL KHOSIYAH ",
+                sekolah: "SMK DARUSYAFAAH",
+                foto: "asset/santi.jpeg", // Placeholder for assets/santi.jpeg
+                status: "TIDAK LOLOS",
+               
+            },
+            "P025-011": {
+                nama: "SETELLA PUTRI SALSABILA",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/stella.jpg", // Placeholder for assets/stella.jpg
+                status: "LOLOS",
+                
+            },
+            "P025-023": {
+                nama: "SHAREFA JEHAN AMIRAH ",
+                sekolah: "SMK NEGERI 1 CILELES",
+                foto: "asset/jehan.png", // Placeholder for assets/jehan.png
+                status: "LOLOS",
+                
+            },
+            "P025-028": {
+                nama: "SILVI FITRI OKTAFIANI ",
+                sekolah: "SMK NEGERI 1 CILELES",
+                foto: "asset/silvi.jpg", // Placeholder for assets/silvi.jpg
+                status: "LOLOS",
+                
+            },
+            "P025-015": {
+                nama: "SINDY SISTIARANI  ",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/sindu.jpg", // Placeholder for assets/sindy.jpg
+                status: "LOLOS",
+                
+            },
+            "P025-002": {
+                nama: "SITI AISYAH ",
+                sekolah: "SMK CIGEMBOR",
+                foto: "asset/siti.jpeg", // Placeholder for assets/siti.jpeg
+                status: "LOLOS",
+                
+            },
+            "P025-021": {
+                nama: "SITI AMALIA ",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/siti.jpg", // Placeholder for assets/siti.jpg
+                status: "LOLOS",
+                
+            },
+            "P025-044": {
+                nama: "SITI AYUMI ",
+                sekolah: "SMK LENTERA BANGSA CILELES",
+                foto: "https://placehold.co/120x120/4CAF50/FFFFFF?text=AYUMI", // Placeholder for empty foto
+                status: "TIDAK LOLOS",
+                
+            },
+            "P025-027": {
+                nama: "SITI ROSITA",
+                sekolah: "SMK NEGERI 1 CILELES",
+                foto: "https://placehold.co/120x120/4CAF50/FFFFFF?text=ROSITA", // Placeholder for empty foto
+                status: "LOLOS",
+                
+            },
+            "P025-029": {
+                nama: "SITI ZAZIRA",
+                sekolah: "SMK NEGERI 1 CILELES",
+                foto: "asset/zazira.jpg", // Placeholder for assets/zazira.jpg
+                status: "LOLOS",
+                
+            },
+            "P025-008": {
+                nama: "SIVA ANGGRAENI",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/siva.jpg", // Placeholder for assets/siva.jpg
+                status: "LOLOS",
+                
+            },
+            "P025-030": {
+                nama: "SULISTIAWATI",
+                sekolah: "SMK NEGERI 1 CILELES",
+                foto: "asset/sulis.jpg", // Placeholder for assets/sulis.jpg
+                status: "LOLOS",
+
+            },
+
+            "P025-014": {
+                nama: "YASIR FEBY SHOPARY AMARULLAH ",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/yasir.jpg", // Placeholder for assets/yasir.jpg
+                status: "LOLOS",
+                
+            },
+            "P025-009": {
+                nama: "YUSI WAHYUNI  ",
+                sekolah: "SMA NEGERI 1 CILELES",
+                foto: "asset/yusi.jpg", // Placeholder for assets/yusi.jpg
+                status: "LOLOS",
+                
+            },
+            "P025-040": {
+                nama: "YUYUN WAHYUNI ",
+                sekolah: "SMK LENTERA BANGSA",
+                foto: "asset/yuyun.jpg", // Placeholder for assets/yuyun.jpg
+                status: "TIDAK LOLOS",
+                
+            }
+        };
+
+        checkParticipantBtn.addEventListener('click', () => {
+            const inputNumber = participantNumberInput.value.trim().toUpperCase(); // Convert to uppercase for consistent matching
+            participantErrorMessage.classList.add('hidden'); // Hide previous error
+            participantDetails.classList.add('hidden'); // Hide details
+            participantNotFound.classList.add('hidden'); // Hide not found message
+            // Removed sklLinkContainer.classList.add('hidden'); as the element is removed from HTML
+
+            // Remove previous status classes and content
+            resultStatusDisplay.classList.remove('result-status-lolos', 'result-status-tidak-lolos', 'animate-status-fade-in-up');
+            resultMainStatusMessage.innerHTML = ''; // Clear icon and text
+            participantPhoto.src = 'https://placehold.co/120x120/E5E7EB/4B5563?text=Foto'; // Reset photo placeholder
+
+            if (!inputNumber) {
+                participantErrorMessage.textContent = "Mohon masukkan Nomor Peserta.";
+                participantErrorMessage.classList.remove('hidden');
+                return;
+            }
+
+            const foundParticipant = participants[inputNumber]; // Access directly by key
+
+            if (foundParticipant) {
+                resultNoPeserta.textContent = inputNumber; // Use inputNumber as the key is the participant number
+                resultNama.textContent = foundParticipant.nama;
+                resultSekolah.textContent = foundParticipant.sekolah; // Set school name
+                
+                // Set photo, with fallback for empty/invalid URLs
+                if (foundParticipant.foto && foundParticipant.foto.trim() !== '') {
+                    participantPhoto.src = foundParticipant.foto;
+                } else {
+                    participantPhoto.src = 'https://placehold.co/120x120/E5E7EB/4B5563?text=Foto'; // Placeholder
+                }
+                
+                // Update status display with icon and text
+                if (foundParticipant.status === 'LOLOS') {
+                    resultStatusDisplay.classList.add('result-status-lolos');
+                    resultMainStatusMessage.innerHTML = '<i class="fas fa-check-circle fa-2x mb-3"></i> <br> <span>Selamat Anda Lolos ke Tahap Berikutnya.</span>';
+                    resultCaption.textContent = 'Selamat atas Lolos dalam seleksi tahap 2 dan Anda Berhak Mengikuti tahap selanjutnya yaitu Pra-Training Center.';
+                } else {
+                    resultStatusDisplay.classList.add('result-status-tidak-lolos');
+                    resultMainStatusMessage.innerHTML = '<i class="fas fa-times-circle fa-2x mb-2"></i> <br><span>Mohon maaf anda tidak lolos pada seleksi tahap 2.</span>';
+                    resultCaption.textContent = 'Anda sudah berusaha keras dalam tahapan seleksi, jangan berkecil hati masih ada kesempatan lain di depan sana yang menanti.';
+                }
+                resultStatusDisplay.classList.add('animate-status-fade-in-up'); // Apply animation
+
+                participantDetails.classList.remove('hidden');
+            } else {
+                participantNotFound.classList.remove('hidden');
+            }
+            participantResultModal.style.display = 'flex'; // Show the modal
+        });
+
+        closeParticipantResultModalBtn.addEventListener('click', () => {
+            participantResultModal.style.display = 'none';
+        });
+
+        // Close participant result modal if clicked outside content
+        participantResultModal.addEventListener('click', (e) => {
+            if (e.target === participantResultModal) {
+                participantResultModal.style.display = 'none';
+            }
+        });
+
+    </script>
+</body>
+</html>
