@@ -428,7 +428,7 @@
                             <strong class="text-gray-700">Nama:</strong> <span id="result-nama" class="text-gray-800 font-semibold"></span>
                         </div>
                         <div class="participant-detail-item mb-6">
-                            <strong class="text-gray-700">Sekolah:</strong> <span id="result-sekolah" class="text-gray-800 font-semibold"></span>
+                            <strong class="text-gray-700">Satuan:</strong> <span id="result-sekolah" class="text-gray-800 font-semibold"></span>
                         </div>
 
                         <!-- Keputusan Panitia Section -->
@@ -903,11 +903,11 @@
                 // Update status display with icon and text
                 if (foundParticipant.status === 'LOLOS') {
                     resultStatusDisplay.classList.add('result-status-lolos');
-                    resultMainStatusMessage.innerHTML = '<i class="fas fa-check-circle fa-2x mb-3"></i> <br> <span>Selamat Anda Lolos ke Tahap Berikutnya.</span>';
+                    resultMainStatusMessage.innerHTML = '<i class="fas fa-check-circle fa-2x mb-2"></i> <br> <span>Selamat Anda Lolos ke Tahap Berikutnya.</span>';
                     resultCaption.textContent = 'Selamat atas Lolos dalam seleksi tahap 2 dan Anda Berhak Mengikuti tahap selanjutnya yaitu Pra-Training Center.';
                 } else {
                     resultStatusDisplay.classList.add('result-status-tidak-lolos');
-                    resultMainStatusMessage.innerHTML = '<i class="fas fa-times-circle fa-2x mb-2"></i> <br><span>Mohon maaf anda tidak lolos pada seleksi tahap 2.</span>';
+                    resultMainStatusMessage.innerHTML = '<i class="fas fa-1x mb-1"></i> <span>Mohon maaf anda tidak lolos pada seleksi tahap 2</span>';
                     resultCaption.textContent = 'Anda sudah berusaha keras dalam tahapan seleksi, jangan berkecil hati masih ada kesempatan lain di depan sana yang menanti.';
                 }
                 resultStatusDisplay.classList.add('animate-status-fade-in-up'); // Apply animation
